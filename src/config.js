@@ -7,6 +7,11 @@ function sleepFor( sleepDuration ){
 	console.log('Done sleeping for ' + sleepDuration);
 }
 
+function timer(ms) {
+	return new Promise(res => setTimeout(res, ms));
+}
+
 module.exports = {
-	sleepFor
+	sleepFor,
+	timer
 }

@@ -5,9 +5,12 @@ var config = require('./config');
 
 console.log("Initialiazing ApiMonitor");
 
-let lastResponseData = null;
-let sleeping = false;
-let loggedIn = false;
+let sizeOfLast = 0;
+let signal = false;
+let activeThreads = 0;
+
+
+console.log(constants.apiRoute);
 
 function login() {
 	console.log('Loggin in')
@@ -22,44 +25,52 @@ function login() {
 }
 
 function fetch() {
-	return axios.head(constants.apiRoute + "phonesessionregister");
+	return axios.get(constants.apiRoute + "phonesessionregister");
 
 }
 
-function handleFetching(data) {
-	console.log(data);
+function handleFetching(response) {
+	let data = response.data;
+	let size = data.length;
+	if(sizeOfLast < size) {
+		console.log("New Request");
+		signal = true;
+		setTimeout( () => {
+			signal = false;
+		}, 5000);
+		sizeOfLast = size;
+	}
 }
 
-function doLooping() {
+async function doLooping() {
+	activeThreads++;
 	while(1) {
-		console.log('Going for it')
-		config.sleepFor(2000);
-		console.log('Doing the fetch')
-			fetch().then( fetchSuccess => {
+		console.log(`ActiveThreads = {${activeThreads}}`)
+		console.log('Fetching')
+		fetch().then( fetchSuccess => {
 				console.log('Fetch successful')
-				console.log(fetchSuccess.data)
 				handleFetching(fetchSuccess.data);
 			}, error => {
 				console.log(error.response.statusText);
 				if(error.response.statusText === 'Unauthorized') {
 					console.log("Credentials Expired");
+					activeThreads--;
 					return;
 				}
 			})
+		await config.timer(5000);		
 	}
 }
 
-console.log(constants.apiRoute);
 
-function timer(ms) {
-	return new Promise(res => setTimeout(res, ms));
-}
+
 
 async function loop () {
 	while(1) {
+		console.log('Loggin in');
 		login();
-		await timer(3000);
-		doLooping();
+		await config.timer(3000);
+		await doLooping();
 	}
 }
 
