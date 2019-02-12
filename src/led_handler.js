@@ -3,7 +3,6 @@ let LED = new gpio(3, "out");
 let BUTTON = new gpio(4, "in", "both");
 
 BUTTON.watch((err, value) => {
-  console.log(err, value);
   LED.writeSync(0);
 });
 
