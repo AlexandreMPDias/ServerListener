@@ -2,9 +2,9 @@ let gpio = require("onoff").Gpio;
 let LED = new gpio(3, "out");
 let BUTTON = new gpio(2, "in", "both");
 
-button.watch((err, value) => {
+BUTTON.watch((err, value) => {
   console.log(err, value);
-  led.writeSync(0);
+  LED.writeSync(0);
 });
 
 function initLED(pin) {
