@@ -1,6 +1,6 @@
 let gpio = require("onoff").Gpio;
 let LED = new gpio(3, "out");
-let BUTTON = new gpio(2, "in", "both");
+let BUTTON = new gpio(4, "in", "both");
 
 BUTTON.watch((err, value) => {
   console.log(err, value);
