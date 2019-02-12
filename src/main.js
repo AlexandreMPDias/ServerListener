@@ -2,6 +2,7 @@
 var axios = require('axios');
 var constants = require('./constants');
 var config = require('./config');
+var LED = require('./led_handler');
 
 console.log("Initialiazing ApiMonitor");
 
@@ -34,9 +35,11 @@ function handleFetching(response) {
 	let size = data.length;
 	if(sizeOfLast < size) {
 		console.log("New Request");
-		signal = true;
+		LED.turnOn();
+		//LED.startBlinking();
+		//LED.stopBlinkingAfter(5000);
 		setTimeout( () => {
-			signal = false;
+			LED.turnOff();
 		}, 5000);
 		sizeOfLast = size;
 	}
